@@ -1,20 +1,37 @@
 <script setup lang="ts">
 import TheIcon from '~/components/TheIcon.vue'
 import TheBtn from '~/components/TheBtn.vue'
+import { useTodosStore } from '~/store/todos'
+import dayjs from 'dayjs'
+import { useRouter, useRoute } from 'vue-router'
+
+const todosStore = useTodosStore()
+
+const router = useRouter()
+const route = useRoute()
+const foundTodo = todosStore.todos.find(todo => todo.id === route.params.id)
+foundTodo ? (todosStore.currentTodo = { ...foundTodo }) : router.push('/')
 
 function toggleDone() {}
-function offModal() {}
+function offModal() {
+  router.push('/')
+}
 function deleteTodo() {}
 function updateTodo() {}
+function formatDate(date: string) {
+  return dayjs(date).format('YYYY년 M월 D일 H시 m분')
+}
 </script>
 
 <template>
   <div class="modal">
-    <div class="background"></div>
+    <div
+      class="background"
+      @click="offModal"></div>
     <div class="contents">
       <div class="todo-head">
         <TheIcon
-          :active="false"
+          :active="todosStore.currentTodo.done"
           @click="toggleDone">
           check
         </TheIcon>
@@ -33,8 +50,12 @@ function updateTodo() {}
         </div>
       </div>
       <div class="data-group">
-        <div class="date">생성일:</div>
-        <div class="date">수정일:</div>
+        <div class="date">
+          생성일:{{ formatDate(todosStore.currentTodo.createdAt) }}
+        </div>
+        <div class="date">
+          수정일:{{ formatDate(todosStore.currentTodo.updatedAt) }}
+        </div>
       </div>
       <div
         class="editor"
