@@ -60,38 +60,44 @@ function initSortable() {
 </script>
 
 <template>
-  <div class="todo-head">
-    <TheIcon
-      :active="isAllChecked"
-      @click="toggleAllCheckboxes"
-      >done_all</TheIcon
-    >
-    <div class="btn-group">
-      <TheBtn
-        v-for="filter in todosStore.filters"
-        :key="filter.name"
-        :active="todosStore.filterStatus === filter.name"
-        @click="todosStore.filterStatus = filter.name">
-        {{ filter.label }}
-      </TheBtn>
-      <TheBtn
-        danger
-        @click="todosStore.deleteDoneTodos">
-        완료된 할 일 삭제
-      </TheBtn>
+  <div class="todos-wrap shadow">
+    <div class="todo-head">
+      <TheIcon
+        :active="isAllChecked"
+        @click="toggleAllCheckboxes"
+        >done_all</TheIcon
+      >
+      <div class="btn-group">
+        <TheBtn
+          v-for="filter in todosStore.filters"
+          :key="filter.name"
+          :active="todosStore.filterStatus === filter.name"
+          @click="todosStore.filterStatus = filter.name">
+          {{ filter.label }}
+        </TheBtn>
+        <TheBtn
+          danger
+          @click="todosStore.deleteDoneTodos">
+          완료된 할 일 삭제
+        </TheBtn>
+      </div>
     </div>
-  </div>
-  <div
-    ref="todoListElement"
-    class="todo-list">
-    <TodoItem
-      v-for="todo in todosStore.filteredTodos"
-      :key="todo.id"
-      :todo="todo" />
+    <div
+      ref="todoListElement"
+      class="todo-list">
+      <TodoItem
+        v-for="todo in todosStore.filteredTodos"
+        :key="todo.id"
+        :todo="todo" />
+    </div>
   </div>
 </template>
 
 <style lang="scss" scoped>
+.todos-wrap {
+  border-radius: 6px;
+  overflow: hidden;
+}
 .todo-head {
   height: 60px;
   border-bottom: 1px solid var(--border-color);
