@@ -6,7 +6,9 @@ import { useTodosStore } from '~/store/todos'
 const title = ref('')
 const todosStore = useTodosStore()
 
-async function createTodo() {
+async function createTodo(event: MouseEvent | KeyboardEvent) {
+  //한글 입력시 브라우저에서 구조화하는 것 때문에 두번 요청이 들어감
+  if (event instanceof KeyboardEvent && event.isComposing) return
   if (!title.value.trim()) return
   try {
     await todosStore.createTodo({ title: title.value })
