@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import TheIcon from '~/components/TheIcon.vue'
 import TheBtn from '~/components/TheBtn.vue'
 import { useTodosStore } from '~/store/todos'
@@ -7,17 +8,37 @@ import { useRouter, useRoute } from 'vue-router'
 
 const todosStore = useTodosStore()
 
+const editorElement = ref<HTMLDivElement | null>(null)
+
 const router = useRouter()
 const route = useRoute()
 const foundTodo = todosStore.todos.find(todo => todo.id === route.params.id)
 foundTodo ? (todosStore.currentTodo = { ...foundTodo }) : router.push('/')
 
 function toggleDone() {}
+onMounted(() => {
+  editorElement.value?.focus()
+  window.addEventListener('keydown', escKeyHandler)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', escKeyHandler)
+})
+
+function escKeyHandler(event: KeyboardEvent) {
+  if (event.key === 'Escape') {
+    offModal()
+  }
+}
 function offModal() {
   router.push('/')
 }
 function deleteTodo() {}
 function updateTodo() {}
+async function updateTodo() {
+  await todosStore.updateTodo({ ...todosStore.currentTodo })
+  offModal()
+}
 function formatDate(date: string) {
   return dayjs(date).format('YYYY년 M월 D일 H시 m분')
 }
@@ -58,6 +79,7 @@ function formatDate(date: string) {
         </div>
       </div>
       <div
+        ref="editorElement"
         class="editor"
         contenteditable>
         hi
