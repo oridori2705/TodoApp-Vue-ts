@@ -61,6 +61,15 @@ export const useTodosStore = defineStore('todos', {
         console.error('updateTodo:', error)
         Object.assign(foundTodo, backedUpTodo)
       }
+    },
+    updateCheckboxes(done: boolean) {
+      //async/await를 붙이지 않은 이유는 병렬적으로 요쳥을 보내기 위해서
+      this.todos.forEach(todo => {
+        this.updateTodo({
+          ...todo,
+          done
+        })
+      })
     }
   }
 })
