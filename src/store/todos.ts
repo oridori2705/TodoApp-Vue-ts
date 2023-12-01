@@ -23,12 +23,17 @@ export const useTodosStore = defineStore('todos', {
   getters: {},
   actions: {
     async createTodo({ title }: CreateTodoPayload) {
-      await axios.post('/api/todos', {
-        method: 'POST',
-        data: {
-          title
-        }
-      })
+      try {
+        const { data: createdTodo } = await axios.post('/api/todos', {
+          method: 'POST',
+          data: {
+            title
+          }
+        })
+        this.todos.unshift(createdTodo)
+      } catch (error) {
+        console.error('createTodo failed', error)
+      }
     },
     async fetchTodos() {
       const { data } = await axios.post('/api/todos', {
