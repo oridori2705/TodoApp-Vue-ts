@@ -41,8 +41,12 @@ function onChange() {
 function offModal() {
   router.push('/')
 }
-function deleteTodo() {}
-function updateTodo() {}
+async function deleteTodo() {
+  await todosStore.deleteTodo({
+    id: todosStore.currentTodo.id
+  })
+  offModal()
+}
 async function updateTodo() {
   await todosStore.updateTodo({ ...todosStore.currentTodo })
   offModal()

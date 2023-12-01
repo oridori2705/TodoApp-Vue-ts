@@ -21,6 +21,9 @@ interface Filter {
 interface CreateTodoPayload {
   title: string
 }
+interface DeleteTodoPayLoad {
+  id: string
+}
 interface ReorderTodosPayload {
   oldIndex: number
   newIndex: number
@@ -93,7 +96,6 @@ export const useTodosStore = defineStore('todos', {
       const foundTodo = this.todos.find(t => t.id === todo.id)
       if (!foundTodo) return
       const backedUpTodo = { ...foundTodo } // API 요청 실패시 복원데이터
-      Object.assign(foundTodo, todo)
       Object.assign(foundTodo, todo) // 참조형이라서..??
       try {
         const { id: path, title, done } = todo
@@ -120,6 +122,17 @@ export const useTodosStore = defineStore('todos', {
           done
         })
       })
+    },
+    async deleteTodo({ id }: DeleteTodoPayLoad) {
+      try {
+        await axios.post('/api/todos', {
+          method: 'DELETE',
+          path: id
+        })
+        this.todos = this.todos.filter(todo => todo.id !== id)
+      } catch (error) {
+        console.error('deleteTodo:', error)
+      }
     },
     async deleteDoneTodos() {
       const todoIds = this.todos.filter(todo => todo.done).map(todo => todo.id)
