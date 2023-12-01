@@ -16,7 +16,11 @@ const debounced = debounce((val: boolean) => {
 }, 400)
 const isAllChecked = computed({
   get() {
-    return todosStore.todos.every(todo => todo.done)
+    //부정연산자를 두번 쓴 이유 : truthy,falsy데이터를 boolean데이터로 바꾸기 위해서임
+    return (
+      !!todosStore.filteredTodos.length &&
+      todosStore.filteredTodos.every(todo => todo.done)
+    )
   },
   set(val: boolean) {
     todosStore.todos.forEach(todo => {
