@@ -40,6 +40,27 @@ export const useTodosStore = defineStore('todos', {
         method: 'GET'
       })
       this.todos = data
+    },
+    async updateTodo(todo: Todo) {
+      //낙관적 업데이트
+      const foundTodo = this.todos.find(t => t.id === todo.id)
+      if (!foundTodo) return
+      const backedUpTodo = { ...foundTodo } // API 요청 실패시 복원데이터
+      Object.assign(foundTodo, todo)
+      try {
+        const { id: path, title, done } = todo
+        const { data: updatedTodo } = await axios.post(`/api/todos/`, {
+          method: 'PUT',
+          path,
+          data: {
+            title,
+            done
+          }
+        })
+      } catch (error) {
+        console.error('updateTodo:', error)
+        Object.assign(foundTodo, backedUpTodo)
+      }
     }
   }
 })

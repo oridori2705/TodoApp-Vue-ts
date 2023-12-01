@@ -1,18 +1,38 @@
 <script setup lang="ts">
 import TheIcon from '~/components/TheIcon.vue'
-import { ref } from 'vue'
+import { computed } from 'vue'
 import type { Todo } from '~/store/todos'
+import { useTodosStore } from '~/store/todos'
 
-const done = ref(false)
+const todosStore = useTodosStore()
 
-defineProps<{
+const props = defineProps<{
   todo: Todo
 }>()
+const done = computed({
+  get() {
+    return props.todo.done
+  },
+  set(val) {
+    todosStore.updateTodo({
+      ...props.todo,
+      done: val
+    })
+  }
+})
+
+function toggleDone() {
+  done.value = !done.value
+}
 </script>
 
 <template>
   <div class="todo-item">
-    <TheIcon :active="done">check</TheIcon>
+    <TheIcon
+      :active="done"
+      @click="toggleDone"
+      >check</TheIcon
+    >
     <div class="title">{{ todo.title }}</div>
     <div class="drag-handle">
       <span class="material-symbols-outlined">drag_indicator</span>
