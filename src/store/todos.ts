@@ -94,6 +94,7 @@ export const useTodosStore = defineStore('todos', {
       if (!foundTodo) return
       const backedUpTodo = { ...foundTodo } // API 요청 실패시 복원데이터
       Object.assign(foundTodo, todo)
+      Object.assign(foundTodo, todo) // 참조형이라서..??
       try {
         const { id: path, title, done } = todo
         const { data: updatedTodo } = await axios.post(`/api/todos`, {
@@ -104,6 +105,8 @@ export const useTodosStore = defineStore('todos', {
             done
           }
         })
+        //updatedAt만 수정하는 이유는 APi 요청 중에 변경사항이 생겨버리면 덮어씌워지므로
+        foundTodo.updatedAt = updatedTodo.updatedAt // 참조형이라서..??
       } catch (error) {
         console.error('updateTodo:', error)
         Object.assign(foundTodo, backedUpTodo)

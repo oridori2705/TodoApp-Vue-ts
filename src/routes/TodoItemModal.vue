@@ -15,7 +15,6 @@ const route = useRoute()
 const foundTodo = todosStore.todos.find(todo => todo.id === route.params.id)
 foundTodo ? (todosStore.currentTodo = { ...foundTodo }) : router.push('/')
 
-function toggleDone() {}
 onMounted(() => {
   editorElement.value?.focus()
   window.addEventListener('keydown', escKeyHandler)
@@ -28,6 +27,15 @@ onUnmounted(() => {
 function escKeyHandler(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     offModal()
+  }
+}
+function toggleDone() {
+  todosStore.currentTodo.done = !todosStore.currentTodo.done
+}
+function onChange() {
+  const title = editorElement.value?.textContent
+  if (title && title.trim()) {
+    todosStore.currentTodo.title = title
   }
 }
 function offModal() {
@@ -74,16 +82,22 @@ function formatDate(date: string) {
         <div class="date">
           생성일:{{ formatDate(todosStore.currentTodo.createdAt) }}
         </div>
-        <div class="date">
+        <div
+          v-if="
+            todosStore.currentTodo.createdAt !==
+            todosStore.currentTodo.updatedAt
+          "
+          class="date">
           수정일:{{ formatDate(todosStore.currentTodo.updatedAt) }}
         </div>
       </div>
       <div
         ref="editorElement"
         class="editor"
-        contenteditable>
-        hi
-      </div>
+        contenteditable
+        @blur="onChange"
+        @keydown.enter.prevent="onChange(), updateTodo()"
+        v-text="todosStore.currentTodo.title"></div>
     </div>
   </div>
 </template>
@@ -107,6 +121,7 @@ function formatDate(date: string) {
   }
   /* 모달에서 내용의 길이에따라 반응형 크기적용하는법 */
   .contents {
+    margin: 0 20px;
     width: 100%;
     max-width: 700px;
     max-height: calc(100vh - 40px);
