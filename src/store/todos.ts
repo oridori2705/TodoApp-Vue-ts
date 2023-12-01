@@ -12,15 +12,48 @@ export interface Todo {
   updatedAt: string // 할 일 수정일
 }
 
+type FilterStatus = 'all' | 'todo' | 'done'
+type Filters = Filter[]
+interface Filter {
+  label: string
+  name: FilterStatus
+}
 interface CreateTodoPayload {
   title: string
 }
 
+//초기화되는 데이터가 복잡하면 아래처럼 변수로 뽑아서 type을 지정해주는 것이 좋다.
+//as로 단언하게 되면 속성에 오타가 있어도 typescript에서 에러를 발생시키지 않는다.
+const filters: Filters = [
+  {
+    label: '전체',
+    name: 'all'
+  },
+  { label: '할 일만', name: 'todo' },
+  { label: '완료만', name: 'done' }
+]
+
 export const useTodosStore = defineStore('todos', {
   state: () => ({
-    todos: [] as Todos
+    todos: [] as Todos,
+    filterStatus: 'all' as FilterStatus,
+    filters
   }),
-  getters: {},
+  getters: {
+    filteredTodos(state) {
+      return state.todos.filter(todo => {
+        switch (state.filterStatus) {
+          case 'todo':
+            return !todo.done
+          case 'done':
+            return todo.done
+          case 'all':
+          default:
+            return true
+        }
+      })
+    }
+  },
   actions: {
     async createTodo({ title }: CreateTodoPayload) {
       try {
@@ -49,7 +82,7 @@ export const useTodosStore = defineStore('todos', {
       Object.assign(foundTodo, todo)
       try {
         const { id: path, title, done } = todo
-        const { data: updatedTodo } = await axios.post(`/api/todos/`, {
+        const { data: updatedTodo } = await axios.post(`/api/todos`, {
           method: 'PUT',
           path,
           data: {
@@ -70,6 +103,22 @@ export const useTodosStore = defineStore('todos', {
           done
         })
       })
+    },
+    async deleteDoneTodos() {
+      const todoIds = this.todos.filter(todo => todo.done).map(todo => todo.id)
+      if (!todoIds.length) return
+      try {
+        await axios.post('/api/todos', {
+          method: 'DELETE',
+          path: 'deletions',
+          data: {
+            todoIds
+          }
+        })
+        this.todos = this.todos.filter(todo => !todoIds.includes(todo.id))
+      } catch (error) {
+        console.error('deleteDoneTodos:', error)
+      }
     }
   }
 })
