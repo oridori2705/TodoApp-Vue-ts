@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import TheIcon from '~/components/TheIcon.vue'
+import TodoCreator from '~/components/TodoCreator.vue'
 </script>
 
 <template>
-  <h1>MainPage</h1>
-  <TheIcon>add</TheIcon>
-  <TheIcon>check</TheIcon>
+  <main>
+    <TodoCreator />
+  </main>
 </template>
