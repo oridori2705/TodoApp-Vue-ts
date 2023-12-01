@@ -3,9 +3,13 @@ import TodoItem from './TodoItem.vue'
 import { useTodosStore } from '~/store/todos'
 import { computed } from 'vue'
 import TheIcon from '~/components/TheIcon.vue'
+import { debounce } from 'lodash'
 
 const todosStore = useTodosStore()
 
+const debounced = debounce((val: boolean) => {
+  todosStore.updateCheckboxes(val)
+}, 400)
 const isAllChecked = computed({
   get() {
     return todosStore.todos.every(todo => todo.done)
@@ -14,7 +18,7 @@ const isAllChecked = computed({
     todosStore.todos.forEach(todo => {
       todo.done = val
     })
-    todosStore.updateCheckboxes(val)
+    debounced(val)
   }
 })
 
