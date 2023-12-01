@@ -108,6 +108,7 @@ export const useTodosStore = defineStore('todos', {
           }
         })
         //updatedAt만 수정하는 이유는 APi 요청 중에 변경사항이 생겨버리면 덮어씌워지므로
+
         foundTodo.updatedAt = updatedTodo.updatedAt // 참조형이라서..??
       } catch (error) {
         console.error('updateTodo:', error)

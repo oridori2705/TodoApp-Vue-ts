@@ -52,7 +52,7 @@ async function updateTodo() {
   offModal()
 }
 function formatDate(date: string) {
-  return dayjs(date).format('YYYY년 M월 D일 H시 m분')
+  return dayjs(date).format('YYYY년 M월 D일 H시 m분 ss초')
 }
 </script>
 
