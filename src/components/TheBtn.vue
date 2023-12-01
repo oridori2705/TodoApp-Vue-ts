@@ -31,7 +31,7 @@ defineProps<{
   &.active {
     color: royalblue;
   }
-  *.btn-success {
+  &.btn-success {
     background-color: royalblue;
     color: #fff;
   }
