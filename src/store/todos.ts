@@ -21,6 +21,10 @@ interface Filter {
 interface CreateTodoPayload {
   title: string
 }
+interface ReorderTodosPayload {
+  oldIndex: number
+  newIndex: number
+}
 
 //초기화되는 데이터가 복잡하면 아래처럼 변수로 뽑아서 type을 지정해주는 것이 좋다.
 //as로 단언하게 되면 속성에 오타가 있어도 typescript에서 에러를 발생시키지 않는다.
@@ -119,6 +123,21 @@ export const useTodosStore = defineStore('todos', {
       } catch (error) {
         console.error('deleteDoneTodos:', error)
       }
+    },
+    reorderTodos({ oldIndex, newIndex }: ReorderTodosPayload) {
+      if (oldIndex === newIndex) return
+      const movedTodo = this.todos.splice(oldIndex, 1)[0]
+      this.todos.splice(newIndex, 0, movedTodo)
+
+      const todoIds = this.todos.map(todo => todo.id)
+      //API 요청이후에 별도로 수행할 내용이없어서 async/await 안써도됨
+      axios.post('/api/todos', {
+        method: 'PUT',
+        path: 'reorder',
+        data: {
+          todoIds
+        }
+      })
     }
   }
 })
