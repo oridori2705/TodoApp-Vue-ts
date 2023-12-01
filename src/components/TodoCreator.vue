@@ -1,10 +1,20 @@
 <script setup lang="ts">
 import TheIcon from '~/components/TheIcon.vue'
 import { ref } from 'vue'
+import { useTodosStore } from '~/store/todos'
 
 const title = ref('')
+const todosStore = useTodosStore()
 
-async function createTodo() {}
+async function createTodo() {
+  if (!title.value.trim()) return
+  try {
+    await todosStore.createTodo({ title: title.value })
+    title.value = ''
+  } catch (error) {
+    console.error('TodoCreator/createTodo failed')
+  }
+}
 </script>
 
 <template>
