@@ -7,5 +7,14 @@
   ],
   "parserOptions": {
     "parser": "@typescript-eslint/parser"
+  },
+  //Delete `␍` 오류
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
   }
 }
