@@ -37,11 +37,21 @@ const filters: Filters = [
   { label: '완료만', name: 'done' }
 ]
 
+const currentTodo: Todo = {
+  id: '',
+  order: 0,
+  title: '',
+  done: false,
+  createdAt: '',
+  updatedAt: ''
+}
+
 export const useTodosStore = defineStore('todos', {
   state: () => ({
     todos: [] as Todos,
     filterStatus: 'all' as FilterStatus,
-    filters
+    filters,
+    currentTodo
   }),
   getters: {
     filteredTodos(state) {
