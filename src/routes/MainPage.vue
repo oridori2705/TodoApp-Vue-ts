@@ -1,13 +1,9 @@
 <script setup lang="ts">
-;(async () => {
-  const res = await fetch('/api/hello', {
-    method: 'POST'
-  })
-  const json = await res.json()
-  console.log(json)
-})()
+import TheIcon from '~/components/TheIcon.vue'
 </script>
 
 <template>
   <h1>MainPage</h1>
+  <TheIcon>add</TheIcon>
+  <TheIcon>check</TheIcon>
 </template>
