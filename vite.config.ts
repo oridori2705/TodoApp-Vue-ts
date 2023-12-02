@@ -11,5 +11,10 @@ export default defineConfig({
         replacement: '/src'
       }
     ]
+  },
+  server: {
+    proxy: {
+      '/api': { target: 'http://localhost:2999' }
+    }
   }
 })
