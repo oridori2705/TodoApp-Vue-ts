@@ -16,3 +16,10 @@ const todosStore = useTodosStore()
   <!-- routes의 children에 있는 컴포넌트를 출력하기 위해서 작성해야함 -->
   <RouterView v-if="todosStore.todos.length" />
 </template>
+
+<style scoped lang="scss">
+.main {
+  max-width: 700px;
+  margin: 0 auto;
+}
+</style>
