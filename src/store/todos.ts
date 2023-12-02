@@ -54,7 +54,8 @@ export const useTodosStore = defineStore('todos', {
     todos: [] as Todos,
     filterStatus: 'all' as FilterStatus,
     filters,
-    currentTodo
+    currentTodo,
+    loading: false
   }),
   getters: {
     filteredTodos(state) {
@@ -73,6 +74,8 @@ export const useTodosStore = defineStore('todos', {
   },
   actions: {
     async createTodo({ title }: CreateTodoPayload) {
+      if (this.loading) return
+      this.loading = true
       try {
         const { data: createdTodo } = await axios.post('/api/todos', {
           method: 'POST',
@@ -83,13 +86,23 @@ export const useTodosStore = defineStore('todos', {
         this.todos.unshift(createdTodo)
       } catch (error) {
         console.error('createTodo failed', error)
+      } finally {
+        this.loading = false
       }
     },
     async fetchTodos() {
-      const { data } = await axios.post('/api/todos', {
-        method: 'GET'
-      })
-      this.todos = data
+      if (this.loading) return
+      this.loading = true
+      try {
+        const { data } = await axios.post('/api/todos', {
+          method: 'GET'
+        })
+        this.todos = data
+      } catch (error) {
+        console.error('fetchedTodos failed', error)
+      } finally {
+        this.loading = false
+      }
     },
     async updateTodo(todo: Todo) {
       //낙관적 업데이트
@@ -138,6 +151,8 @@ export const useTodosStore = defineStore('todos', {
     async deleteDoneTodos() {
       const todoIds = this.todos.filter(todo => todo.done).map(todo => todo.id)
       if (!todoIds.length) return
+
+      this.loading = true
       try {
         await axios.post('/api/todos', {
           method: 'DELETE',
@@ -149,22 +164,31 @@ export const useTodosStore = defineStore('todos', {
         this.todos = this.todos.filter(todo => !todoIds.includes(todo.id))
       } catch (error) {
         console.error('deleteDoneTodos:', error)
+      } finally {
+        this.loading = false
       }
     },
-    reorderTodos({ oldIndex, newIndex }: ReorderTodosPayload) {
+    async reorderTodos({ oldIndex, newIndex }: ReorderTodosPayload) {
       if (oldIndex === newIndex) return
+
+      this.loading = true
       const movedTodo = this.todos.splice(oldIndex, 1)[0]
       this.todos.splice(newIndex, 0, movedTodo)
 
       const todoIds = this.todos.map(todo => todo.id)
-      //API 요청이후에 별도로 수행할 내용이없어서 async/await 안써도됨
-      axios.post('/api/todos', {
-        method: 'PUT',
-        path: 'reorder',
-        data: {
-          todoIds
-        }
-      })
+      try {
+        await axios.post('/api/todos', {
+          method: 'PUT',
+          path: 'reorder',
+          data: {
+            todoIds
+          }
+        })
+      } catch (error) {
+        console.error('reorder error', error)
+      } finally {
+        this.loading = false
+      }
     }
   }
 })

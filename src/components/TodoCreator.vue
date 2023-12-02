@@ -2,6 +2,7 @@
 import TheIcon from '~/components/TheIcon.vue'
 import { ref } from 'vue'
 import { useTodosStore } from '~/store/todos'
+import TheLoader from '~/components/TheLoader.vue'
 
 const title = ref('')
 const todosStore = useTodosStore()
@@ -21,7 +22,9 @@ async function createTodo(event: MouseEvent | KeyboardEvent) {
 
 <template>
   <div class="todo-creator shadow">
+    <TheLoader v-if="todosStore.loading" />
     <TheIcon
+      v-else
       active
       @click="createTodo">
       add
@@ -39,6 +42,7 @@ async function createTodo(event: MouseEvent | KeyboardEvent) {
   height: var(--item-height);
   position: relative;
   margin-bottom: 30px;
+  :deep(.the-loader),
   :deep(.the-icon) {
     position: absolute;
     top: 0;
