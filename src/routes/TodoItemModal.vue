@@ -155,19 +155,19 @@ function formatDate(date: string) {
     border-radius: 6px;
     background-color: #fff;
     position: relative;
-  }
-  .data-group {
-    padding: 30px 30px 0 30px;
-    .date {
-      color: #ddd;
-      font-size: 14px;
-      line-height: 1.4;
+    .data-group {
+      padding: 30px 30px 0 30px;
+      .date {
+        color: #ddd;
+        font-size: 14px;
+        line-height: 1.4;
+      }
     }
-  }
-  .editor {
-    padding: 30px;
-    line-height: 1.5;
-    outline: none;
+    .editor {
+      padding: 30px;
+      line-height: 1.5;
+      outline: none;
+    }
   }
 }
 </style>

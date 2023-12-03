@@ -11,6 +11,7 @@ const router = useRouter()
 const props = defineProps<{
   todo: Todo
 }>()
+
 const done = computed({
   get() {
     return props.todo.done
